@@ -1,3 +1,6 @@
+import java.util.HashMap;
+import java.util.Map;
+
 abstract class Room {
     protected String type;
     protected double price;
@@ -5,6 +8,10 @@ abstract class Room {
     public Room(String type, double price) {
         this.type = type;
         this.price = price;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public abstract void displayDetails();
@@ -43,26 +50,57 @@ class SuiteRoom extends Room {
     }
 }
 
-public class BookMyStayApp {
+class RoomInventory {
+    private Map<String, Integer> inventory;
+
+    public RoomInventory() {
+        inventory = new HashMap<>();
+    }
+
+    public void addRoomType(String type, int count) {
+        inventory.put(type, count);
+    }
+
+    public int getAvailability(String type) {
+        return inventory.getOrDefault(type, 0);
+    }
+
+    public void updateAvailability(String type, int count) {
+        inventory.put(type, count);
+    }
+
+    public void displayInventory() {
+        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
+            System.out.println(entry.getKey() + " Available: " + entry.getValue());
+        }
+    }
+}
+
+public class UseCase3InventorySetup {
     public static void main(String[] args) {
-        System.out.println("BookMyStayApp - Version 2.0");
+        System.out.println("BookMyStayApp - Version 3.0");
         System.out.println("---------------------------");
+
+        RoomInventory hotelInventory = new RoomInventory();
+
+        hotelInventory.addRoomType("Single Room", 10);
+        hotelInventory.addRoomType("Double Room", 5);
+        hotelInventory.addRoomType("Suite Room", 2);
 
         Room single = new SingleRoom();
         Room doubleRm = new DoubleRoom();
         Room suite = new SuiteRoom();
 
-        int singleAvailability = 5;
-        int doubleAvailability = 3;
-        int suiteAvailability = 2;
-
         single.displayDetails();
-        System.out.println("Available: " + singleAvailability);
+        System.out.println("Current Stock: " + hotelInventory.getAvailability(single.getType()));
 
         doubleRm.displayDetails();
-        System.out.println("Available: " + doubleAvailability);
+        System.out.println("Current Stock: " + hotelInventory.getAvailability(doubleRm.getType()));
 
         suite.displayDetails();
-        System.out.println("Available: " + suiteAvailability);
+        System.out.println("Current Stock: " + hotelInventory.getAvailability(suite.getType()));
+
+        System.out.println("\n--- Final Inventory Status ---");
+        hotelInventory.displayInventory();
     }
 }
